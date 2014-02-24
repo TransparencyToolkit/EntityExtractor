@@ -34,17 +34,17 @@ class EntityExtractor
   end
 
   # Extract all terms in ALLCAPS (specifiy min num CAPS chars in row)
-  def extractALLCAPS(minchar)
+  def extractALLCAPS(minchar, ignoreterms)
     @input.each do |i|
       addlist = Array.new
-      parseALLCAPS(i[@extractfield].to_s, i, minchar, addlist)
+      parseALLCAPS(i[@extractfield].to_s, i, minchar, addlist, ignoreterms)
     end
   end
 
   # Parses terms in all caps
-  def parseALLCAPS(toParse, i, minchar, addlist)
-    if toParse =~ (/[A-Z]#{minchar}/)
-      index = toParse =~ (/[A-Z]#{minchar}/)
+  def parseALLCAPS(toParse, i, minchar, addlist, ignoreterms)
+    if toParse =~ (/[A-Z]{#{minchar}}/)
+      index = toParse =~ (/[A-Z]{#{minchar}}/)
       charnum = 0
 
       # Find word in all caps
@@ -66,10 +66,16 @@ class EntityExtractor
         charnum = charnum-2
       else charnum = charnum-1
       end
-      puts toParse[index..charnum]
-      addlist.push(toParse[index..charnum])
-      parseALLCAPS(toParse.split(toParse[0..charnum], 1), i, minchar, addlist)
       
+      # Filter out terms in ignoreterms array
+      if !(ignoreterms.include? toParse[index..charnum])
+        addlist.push(toParse[index..charnum])
+      end
+
+      parsedstring = toParse[0..charnum]
+      toParse.slice! parsedstring
+      parseALLCAPS(toParse, i, minchar, addlist, ignoreterms)
+
     # If there are no (more) results, append addlist to JSON
     else
       i["extract"] = addlist
@@ -77,14 +83,27 @@ class EntityExtractor
     end
   end
 
+  # Get list of just extracted terms by occurrence
+  def getExtract
+    extracthash = Hash.new
+    
+    # Generate hash of all extracted terms
+    @output.each do |i|
+      i["extract"].each do |e|
+        if extracthash.has_key? e
+          extracthash[e] += 1
+        else
+          extracthash[e] = 1
+        end
+      end
+    end
+    
+    # Sort hash
+    return Hash[extracthash.sort_by { |k, v| v}]
+  end
+
   # Generates JSON output
   def genJSON
     JSON.pretty_generate(@output)
   end
-
-  # TODO:
-  # Fix getting multiple all caps terms
-  # Get just list of terms by number of occurrence
-  # Ignore terms field
 end
-
