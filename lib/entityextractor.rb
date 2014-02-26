@@ -37,16 +37,17 @@ class EntityExtractor
   def extractALLCAPS(minchar, ignoreterms)
     @input.each do |i|
       addlist = Array.new
-      parseALLCAPS(i[@extractfield].to_s, i, minchar, addlist, ignoreterms)
+      savefield = i[@extractfield].to_s + " "
+      parseALLCAPS(i[@extractfield].to_s, i, minchar, addlist, ignoreterms, savefield)
     end
   end
 
   # Parses terms in all caps
-  def parseALLCAPS(toParse, i, minchar, addlist, ignoreterms)
+  def parseALLCAPS(toParse, i, minchar, addlist, ignoreterms, savefield)
     if toParse =~ (/[A-Z]{#{minchar}}/)
       index = toParse =~ (/[A-Z]{#{minchar}}/)
       charnum = 0
-
+      
       # Find word in all caps
       toParse.each_char do |c|
         if charnum >= index
@@ -71,14 +72,15 @@ class EntityExtractor
       if !(ignoreterms.include? toParse[index..charnum])
         addlist.push(toParse[index..charnum])
       end
-
+      
       parsedstring = toParse[0..charnum]
       toParse.slice! parsedstring
-      parseALLCAPS(toParse, i, minchar, addlist, ignoreterms)
+      parseALLCAPS(toParse, i, minchar, addlist, ignoreterms, savefield)
 
     # If there are no (more) results, append addlist to JSON
     else
       i["extract"] = addlist
+      i[@extractfield] = savefield
       @output.push(i)
     end
   end
