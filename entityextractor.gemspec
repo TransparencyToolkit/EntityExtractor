@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'entityextractor'
-  s.version     = '0.0.2'
-  s.date        = '2014-02-26'
+  s.version     = '0.0.3'
+  s.date        = '2014-03-01'
   s.summary     = "Extracts entities and terms"
   s.description = "Extracts entities and terms from any JSON."
   s.authors     = ["M. C. McGrath"]

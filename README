@@ -1,12 +1,16 @@
 This extracts terms and entities from a JSON. It currently supports extracting set lists of terms and words in ALLCAPS. In the future it will support extracting names, locations, and dates/times. To use, download the gem 'entityextractor'.
 
 Extract set list of terms-
-e = EntityExtractor.new(JSON, "field name to extract from")
-e.extractTerms(terms, to, extract)
+e = EntityExtractor.new(JSON, "field name to extract from", "second field name", ...)
+e.extract("set", nil, nil, "terms", "to", "extract", ...)
 
 Extract ALLCAPS-
-e = EntityExtractor.new(JSON, "field name to extract from")
-e.extractALLCAPS(minimum # of all caps characters in a row to look for, [array of terms to ignore])
+e = EntityExtractor.new(JSON, "field name to extract from", "second field name", ...)
+e.extract("ALLCAPS", minimum # of all caps characters in a row to look for, [array of terms to ignore], nil)
+
+Extract both ALLCAPS and set list of terms-
+e = EntityExtractor.new(JSON, "field name to extract from", "second field name", ...)
+e.extract("both", minimum # of all caps characters in a row to look for, [array of terms to ignore], "set", "list", ...)
 
 Get output-
 JSON with terms appended to each item: e.genJSON

@@ -1,49 +1,27 @@
 require 'json'
 
 class EntityExtractor
-  def initialize(input, extractfield)
+  def initialize(input, *extractfield)
     @input = JSON.parse(input)
-    @extractfield = extractfield
+    @extractfield = *extractfield
     @output = Array.new
   end
 
   # Extract terms input from preset list
-  def extractTerms(*terms)
-    @input.each do |i|
-      addlist = Array.new
-      count = 0
+  def extractTerms(*terms, i, addlist, field)
+    count = 0
       
-      # Check the item for each term
-      terms.each do |t|
-        count+=1
-        if i[@extractfield].to_s.include? t
-          addlist.push(t)
-          
-          # Add found terms to output on last term
-          if count == terms.length
-            i["extract"] = addlist
-            @output.push(i)
-          end
-
-        elsif count == terms.length
-          i["extract"] = addlist
-          @output.push(i)
-        end
+    # Check the item for each term
+    terms.each do |t|
+      count+=1
+      if i[field].to_s.include? t
+        addlist.push(t)
       end
     end
   end
 
-  # Extract all terms in ALLCAPS (specifiy min num CAPS chars in row)
-  def extractALLCAPS(minchar, ignoreterms)
-    @input.each do |i|
-      addlist = Array.new
-      savefield = i[@extractfield].to_s + " "
-      parseALLCAPS(i[@extractfield].to_s, i, minchar, addlist, ignoreterms, savefield)
-    end
-  end
-
   # Parses terms in all caps
-  def parseALLCAPS(toParse, i, minchar, addlist, ignoreterms, savefield)
+  def parseALLCAPS(toParse, i, minchar, addlist, ignoreterms, savefield, extractfield)
     if toParse =~ (/[A-Z]{#{minchar}}/)
       index = toParse =~ (/[A-Z]{#{minchar}}/)
       charnum = 0
@@ -75,13 +53,11 @@ class EntityExtractor
       
       parsedstring = toParse[0..charnum]
       toParse.slice! parsedstring
-      parseALLCAPS(toParse, i, minchar, addlist, ignoreterms, savefield)
+      parseALLCAPS(toParse, i, minchar, addlist, ignoreterms, savefield, extractfield)
 
     # If there are no (more) results, append addlist to JSON
     else
-      i["extract"] = addlist
-      i[@extractfield] = savefield
-      @output.push(i)
+      i[extractfield] = savefield
     end
   end
 
@@ -108,4 +84,41 @@ class EntityExtractor
   def genJSON
     JSON.pretty_generate(@output)
   end
+
+  def extract(type, minchar, ignoreterms, *terms)
+    @input.each do |i|
+      addlist = Array.new
+      
+      # Generate set terms list
+      if type == "set"
+        @extractfield.each do |f|
+          extractTerms(*terms, i, addlist, f)
+        end
+
+        i["extract"] = addlist
+        @output.push(i)
+      
+      # Generate ALLCAPS terms list
+      elsif type == "ALLCAPS"
+        @extractfield.each do |f|
+          savefield = i[f].to_s + " "
+          parseALLCAPS(i[f].to_s, i, minchar, addlist, ignoreterms, savefield, f)
+        end
+        
+        i["extract"] = addlist
+        @output.push(i)
+
+      # Extract both set terms and ALLCAPS
+      elsif type == "both"
+        @extractfield.each do |f|
+          savefield = i[f].to_s + " "
+          parseALLCAPS(i[f].to_s, i, minchar, addlist, ignoreterms, savefield, f)
+          extractTerms(*terms, i, addlist, f)
+        end
+
+        i["extract"] = addlist
+        @output.push(i)
+      end
+    end 
+ end
 end
