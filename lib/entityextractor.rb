@@ -14,8 +14,9 @@ class EntityExtractor
     # Check the item for each term
     terms.each do |t|
       count+=1
+   
       if i[field].to_s.include? t
-        addlist.push(t)
+        addlist.push(t.upcase)
       end
     end
   end
