@@ -1,4 +1,5 @@
 require 'json'
+load 'extractdates.rb'
 
 class EntityExtractor
   def initialize(input, *extractfield)
@@ -109,6 +110,14 @@ class EntityExtractor
         i["extract"] = addlist
         @output.push(i)
 
+      # Extract dates
+      elsif type == "date"
+        @extractfield.each do |f|
+          d = ExtractDates.new(i[f])
+          outhash = d.chunk(i["path"])
+          @output.push(outhash)
+        end
+
       # Extract both set terms and ALLCAPS
       elsif type == "both"
         @extractfield.each do |f|
@@ -123,3 +132,4 @@ class EntityExtractor
     end 
  end
 end
+
