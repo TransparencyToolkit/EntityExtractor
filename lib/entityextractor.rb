@@ -1,6 +1,5 @@
 require 'json'
 load 'extractdates.rb'
-require 'pry'
 
 class EntityExtractor
   def initialize(input, *extractfield)
@@ -134,6 +133,3 @@ class EntityExtractor
  end
 end
 
-x = EntityExtractor.new(File.read("out.json"), "text")
-x.extract("date", nil, nil, nil)
-puts x.genJSON
