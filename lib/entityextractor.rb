@@ -1,5 +1,6 @@
 require 'json'
 load 'extractdates.rb'
+require 'uploadconvert'
 
 class EntityExtractor
   def initialize(input, *extractfield)
@@ -88,7 +89,13 @@ class EntityExtractor
   end
 
   def extract(type, minchar, ignoreterms, *terms)
+    flag = 0
     @input.each do |i|
+      if i.length == 2
+        i = @input
+        flag = 1
+      end
+
       addlist = Array.new
       
       # Generate set terms list
@@ -129,7 +136,10 @@ class EntityExtractor
         i["extract"] = addlist
         @output.push(i)
       end
+
+      if flag == 1
+        break
+      end
     end 
  end
 end
-
