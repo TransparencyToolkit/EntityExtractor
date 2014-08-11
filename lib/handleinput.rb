@@ -41,6 +41,16 @@ class HandleInput
             end
           end
         end
+      elsif mapto == "value"
+        @json.each do |k, v|
+          if !v.is_a? Hash
+            if !outarr.include? v
+              if k == a || v == a
+                outarr.push(v)
+              end
+            end
+          end
+        end
       else
         @json.each do |k, v|
           v.each do |z, w|
