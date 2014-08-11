@@ -1,24 +1,32 @@
 require 'json'
 load 'extractdates.rb'
+load 'handleinput.rb'
 require 'uploadconvert'
 
 class EntityExtractor
-  def initialize(input, *extractfield)
+  def initialize(input, fieldoutname, *extractfield)
     @input = JSON.parse(input)
+    @fieldoutname = fieldoutname
     @extractfield = *extractfield
     @output = Array.new
   end
 
   # Extract terms input from preset list
-  def extractTerms(*terms, i, addlist, field)
+  def extractTerms(extractlist, i, addlist, field)
     count = 0
+    downcased = i[field].to_s.downcase
       
     # Check the item for each term
-    terms.each do |t|
+    extractlist.each do |t, c|
       count+=1
-   
-      if i[field].to_s.include? t
-        addlist.push(t.upcase)
+      if c == true
+        if i[field].to_s.include? t
+          addlist.push(t)
+        end
+      else
+        if downcased.include? t.downcase
+          addlist.push(t)
+        end
       end
     end
   end
@@ -70,7 +78,7 @@ class EntityExtractor
     
     # Generate hash of all extracted terms
     @output.each do |i|
-      i["extract"].each do |e|
+      i[@fieldoutname].each do |e|
         if extracthash.has_key? e
           extracthash[e] += 1
         else
@@ -88,8 +96,12 @@ class EntityExtractor
     JSON.pretty_generate(@output)
   end
 
-  def extract(type, minchar, ignoreterms, *terms)
+  def extract(type, minchar, ignoreterms, terms, ignorefields, caseinfo, mapto)
     flag = 0
+   
+    h = HandleInput.new(terms, ignorefields, caseinfo)
+    extractlist = h.detecttype
+
     @input.each do |i|
       if i.length == 2
         i = @input
@@ -101,10 +113,14 @@ class EntityExtractor
       # Generate set terms list
       if type == "set"
         @extractfield.each do |f|
-          extractTerms(*terms, i, addlist, f)
+          extractTerms(extractlist, i, addlist, f)
         end
-
-        i["extract"] = addlist
+        
+        if mapto
+          i[@fieldoutname] = h.mapout(addlist, mapto)
+        else
+          i[@fieldoutname] = addlist
+        end
         @output.push(i)
       
       # Generate ALLCAPS terms list
@@ -114,7 +130,7 @@ class EntityExtractor
           parseALLCAPS(i[f].to_s, i, minchar, addlist, ignoreterms, savefield, f)
         end
         
-        i["extract"] = addlist
+        i[@fieldoutname] = addlist
         @output.push(i)
 
       # Extract dates
@@ -130,10 +146,15 @@ class EntityExtractor
         @extractfield.each do |f|
           savefield = i[f].to_s + " "
           parseALLCAPS(i[f].to_s, i, minchar, addlist, ignoreterms, savefield, f)
-          extractTerms(*terms, i, addlist, f)
+          extractTerms(extractlist, i, addlist, f)
         end
 
-        i["extract"] = addlist
+        if mapto
+          i[@fieldoutname] = h.mapout(addlist, mapto)
+        else
+          i[@fieldoutname] = addlist
+        end
+
         @output.push(i)
       end
 
@@ -143,3 +164,4 @@ class EntityExtractor
     end 
  end
 end
+
