@@ -3,7 +3,7 @@ require 'json'
 class HandleInput
   def initialize(json, ignorefields, caseinfo)
     @json = json
-    if @ignorefields != nil
+    if ignorefields
       @ignorefields = ignorefields
     else
       @ignorefields = Array.new
