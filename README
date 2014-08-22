@@ -21,22 +21,22 @@ To extract a list of set terms, you need the following-
 
 How to do set term extraction-
 e = EntityExtractor.new(JSON, "extracted field name", "field name to extract from", "second field name", ...)
-e.extract("set", nil, nil, ["terms", "to", "extract"], ["ignore", "these", "fields"], case info as explained in 5, "field to map to")
+e.extract("set", nil, nil, ["terms", "to", "extract"], ["ignore", "these", "fields"], case info as explained in 5, "field to map to", nil)
 
 
 Extract ALLCAPS:
 e = EntityExtractor.new(JSON, "field name to extract from", "second field name", ...)
-e.extract("ALLCAPS", minimum # of all caps characters in a row to look for, [array of terms to ignore], nil)
+e.extract("ALLCAPS", minimum # of all caps characters in a row to look for, [array of terms to ignore], nil, nil)
 
 
 Extract both ALLCAPS and set list of terms:
 e = EntityExtractor.new(JSON, "field name to extract from", "second field name", ...)
-e.extract("both", minimum # of all caps characters in a row to look for, [array of terms to ignore], ["set", "list", ...], case info, "field to map to")
+e.extract("both", minimum # of all caps characters in a row to look for, [array of terms to ignore], ["set", "list", ...], case info, "field to map to", nil)
 
 
 Extract dates:
 e = EntityExtractor.new(JSON, "extract field name", "field name to extract from", "second field name", ...)
-e.extract("date", nil, nil, nil)
+e.extract("date", nil, nil, nil, nil, nil, nil, list, of, fields, to append, to dates)
 
 
 Get output:

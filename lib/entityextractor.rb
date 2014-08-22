@@ -96,7 +96,7 @@ class EntityExtractor
     JSON.pretty_generate(@output)
   end
 
-  def extract(type, minchar, ignoreterms, terms, ignorefields, caseinfo, mapto)
+  def extract(type, minchar, ignoreterms, terms, ignorefields, caseinfo, mapto, *append)
     flag = 0
    
     h = HandleInput.new(terms, ignorefields, caseinfo)
@@ -137,8 +137,14 @@ class EntityExtractor
       elsif type == "date"
         @extractfield.each do |f|
           d = ExtractDates.new(i[f])
-          outhash = d.chunk(i["path"])
-          @output.push(outhash)
+
+          appendhash = Hash.new
+          append.each do |a|
+            appendhash[a] = i[a]
+          end
+
+          outhash = d.chunk(appendhash)
+          @output.push(outhash) if !outhash.empty?
         end
 
       # Extract both set terms and ALLCAPS
