@@ -20,12 +20,12 @@ class EntityExtractor
     extractlist.each do |t, c|
       count+=1
       if c == true
-        if i[field].to_s.include? t
-          addlist.push(t)
+        if i[field].to_s.match(/\b(#{t})\b/)
+          addlist.push(t) if !addlist.include? t
         end
       else
-        if downcased.include? t.downcase
-          addlist.push(t)
+        if downcased.match(/\b(#{t.downcase})\b/)
+          addlist.push(t) if !addlist.include? t
         end
       end
     end
