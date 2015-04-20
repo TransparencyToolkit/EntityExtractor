@@ -21,7 +21,7 @@ class ExtractSetTerms
         # Check if it is the right field
         if ex_field == @extract_term_fields || @extract_term_fields.include?(ex_field)
           # Make dictionary of terms to extract and overall mapping
-          ex_term.is_a?(Array) ? processArrayInput(ex_term, ex_key) : @extract_dict[term] = ex_key
+          ex_term.is_a?(Array) ? processArrayInput(ex_term, ex_key) : @extract_dict[ex_term] = ex_key
         end
 
       end
@@ -40,8 +40,8 @@ class ExtractSetTerms
   def matchTerm?(term, text, case_sensitive)
     # Downcase term and text if not case sensitive
     if case_sensitive == false
-      term = term.downcase
-      text = text.downcase
+      term = term.to_s.downcase
+      text = text.to_s.downcase
     end
     
     # Return if it maches
