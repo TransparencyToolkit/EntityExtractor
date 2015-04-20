@@ -37,9 +37,9 @@ sensitivity determination.
 
 
 Output Methods-
-e.getAllOutput gets all the results
-e.getOnlyMatching gets only the results where terms were extracted from
-e.getTermList gets a list of extracted terms in order of number of appearances
+- e.getAllOutput gets all the results
+- e.getOnlyMatching gets only the results where terms were extracted from
+- e.getTermList gets a list of extracted terms in order of number of appearances
 
 
 [![Code Climate](https://codeclimate.com/github/TransparencyToolkit/EntityExtractor/badges/gpa.svg)](https://codeclimate.com/github/TransparencyToolkit/EntityExtractor)
