@@ -1,0 +1,66 @@
+TODO:
+Re-add ALLCAPS extraction
+Re-add date extraction
+
+
+extract_all_caps.rb:
+findALLCAPS # Finds word in ALLCAPS
+trimExtra # Removes extra characters
+filterIgnore # Filters ignore terms
+sliceContinue # Slices the rest of the string and continues
+extractAllCaps # Calls the above
+
+Plus extractAllCaps method in entity_extractor.rb
+
+Vars: List of found terms, output item, item to extract, fields to extract
+from, # in a row, ignore list, name of output key
+
+
+Old Method-
+# Parses terms in all caps                                                                                                            
+  def parseALLCAPS(toParse, i, minchar, addlist, ignoreterms, savefield,
+  extractfield)
+    if toParse =~ (/[A-Z]{#{minchar}}/)
+      index = toParse =~ (/[A-Z]{#{minchar}}/)
+      charnum = 0
+
+      # Find word in all caps                                                                                                           
+      toParse.each_char do |c|
+        if charnum >= index
+          if toParse[c] == toParse[c].upcase && toParse[c] !~ (/[[:punct:]]/)
+      && toParse[c] !~ (/[[:digit:]]/)
+            charnum += 1
+          else break
+          end
+        else
+          charnum += 1
+        end
+      end
+
+  # Remove any extra characters                                                                                                     
+      if toParse[charnum-2] == " "
+        charnum = charnum-3
+      elsif toParse[charnum-1] == " "
+        charnum = charnum-2
+      else charnum = charnum-1
+      end
+
+      # Filter out terms in ignoreterms array                                                                                           
+      if !(ignoreterms.include? toParse[index..charnum])
+        addlist.push(toParse[index..charnum])
+      end
+
+      parsedstring = toParse[0..charnum]
+      toParse.slice! parsedstring
+      parseALLCAPS(toParse, i, minchar, addlist, ignoreterms, save
+field, extractfield)
+
+  # If there are no (more) results, append addlist to JSON       
+    else
+      i[extractfield] = savefield
+    end
+  end
+
+
+
+Then for date extraction see olddateextract.txt
