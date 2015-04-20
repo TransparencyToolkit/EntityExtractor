@@ -44,11 +44,3 @@ class EntityExtractor
     return Hash[counthash.sort_by { |k, v| v}]
   end
 end
-
-# TODO:
-# Update README
-# Gem and github commit
-
-e = EntityExtractor.new(File.read("../../NSA-Data/get-data/feed.json"), ["doc_text"], "codewords")
-e.extractSetTerms(File.read("../../NSA-Data/extract-lists/codewords.json"), ["codeword"], "case_sensitive")
-puts e.getTermList
