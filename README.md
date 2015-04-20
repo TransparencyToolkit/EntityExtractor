@@ -10,7 +10,7 @@ It used to support (and will soon support again):
 
 To use any methods:
 ```
-e = EntityExtractor.new(File.read("input/file.json"), ["fields", "to",
+e = TermExtractor.new(File.read("input/file.json"), ["fields", "to",
 "extract", "from"], "name_of_output_field")
 ```
 

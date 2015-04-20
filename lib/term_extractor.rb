@@ -1,7 +1,7 @@
 require 'json'
 load 'extract_set_terms.rb'
 
-class EntityExtractor
+class TermExtractor
   def initialize(input, extract_from, save_field)
     @input = JSON.parse(input)
     @extract_from = extract_from
