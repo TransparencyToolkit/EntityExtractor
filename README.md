@@ -1,27 +1,32 @@
 This is a tool for extracting things from text in JSONs.
 
 Currently it supports:
-Set lists of terms
+- Set lists of terms
 
 It used to support (and will soon support again):
-Words in ALLCAPS
-Dates
+- Words in ALLCAPS
+- Dates
 
 
 To use any methods:
+```
 e = EntityExtractor.new(File.read("input/file.json"), ["fields", "to",
 "extract", "from"], "name_of_output_field")
-
+```
 
 Then, for set terms:
+```
 e.extractSetTerms(File.read("list/of/terms.json"), ["field", "with",
 "extraction", "terms"], "if it is case sensitive")
+```
 
 Input JSONs are of the form:
+```
 "Term to map matches to": {
       "Search Terms": ["Array", "of", "terms"],
       "Case Sensitive?": "Yes"
 }
+```
 Alternatively, a simple array of terms to look for also works.
 
 The following options are available for case sensitivity:
